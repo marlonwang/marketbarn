@@ -1,0 +1,10 @@
+mvn install:install-file -Dfile=D:\java\workspace\marketbarn\extdir\lib\common-sdk-1.0.0-SNAPSHOT.jar -DgroupId=cc.appmaker -DartifactId=common-sdk -Dversion=1.0.0-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+
+#或者配置POM文件
+<dependency>
+	<groupId>cc.appmaker</groupId>
+	<artifactId>common-sdk</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<scope>system</scope>
+	<systemPath>D:/Program Files/eclipse-jee-luna/workspace/marketbarn/extdir/lib/common-sdk-1.0.0-SNAPSHOT.jar</systemPath>
+</dependency>
