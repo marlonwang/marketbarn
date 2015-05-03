@@ -25,7 +25,7 @@ public class StaffInfo {
 	private String staffPasswd;
 	
 	// 员工性别
-	private char staffSex;
+	private String staffSex;
 	
 	// 员工 email
 	private String staffMail;
@@ -69,11 +69,11 @@ public class StaffInfo {
 		this.staffPasswd = staffPasswd;
 	}
 	
-	public char getStaffSex(){
+	public String getStaffSex(){
 		return staffSex;
 	}
 	
-	public void setStaffSex(char staffSex){
+	public void setStaffSex(String staffSex){
 		this.staffSex = staffSex;
 	}
 	
