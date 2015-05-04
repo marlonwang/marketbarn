@@ -11,9 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import com.market.marketbarn.model.StaffInfo;
 
+@Repository
 public class StaffManageDao {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(StaffManageDao.class);
@@ -22,22 +24,62 @@ public class StaffManageDao {
 	
 	/**
 	 * 查询进货/出货人员
+	 * @author wangwei
 	 * @param staffId
 	 * @exception database
 	 * @return StaffInfo
 	 * @date 2015-4-28
 	 */
-	public StaffInfo getStaffById(int staffId)
+	public List<StaffInfo> getStaffById(int staffId)
 	{
-		StaffInfo staff = null;
-		String querySql = "SELECT * FROM mkt_users WHERE u_is_admin = 2 AND u_id = " + staffId;
+		List<StaffInfo> staff = null;
+		
+		String querySql = "SELECT * FROM mkt_users WHERE u_id = " + staffId;
 		try{
-		staff = (StaffInfo) jdbcTemplate.query(querySql, new StaffMapper());
+		staff = jdbcTemplate.query(querySql, new StaffMapper());
 		}catch (Exception e)
 		{
 			LOGGER.error("Failed to find ipsec vpn list~", e);
 		}
 		return staff;
+	}
+	
+	/**
+	 * 查询所有人员
+	 * @author wangwei
+	 * @param void
+	 * @return List<StaffInfo>
+	 * @date 2015-5-4
+	 */
+	public List<StaffInfo> getAllStaff(){
+		List<StaffInfo> staffList = null;
+		String querySql = "SELECT * FROM mkt_users";
+		try{
+			staffList = jdbcTemplate.query(querySql, new StaffMapper());
+		}
+		catch(Exception e){
+			LOGGER.info("failed to get staff list ~", e);
+		}
+		return staffList;
+	}
+	
+	/**
+	 * 根据员工级别查询员工
+	 * @param int staffRank
+	 * @return List<StaffInfo>
+	 * 
+	 */
+	public List<StaffInfo> getStaffGroup(int staffRank){
+		staffRank = 0;	//default
+		List<StaffInfo> staffGroup = null;
+		String querySql = "SELECT * FROM mkt_users WHERE u_is_admin = "+ staffRank ;
+		try {
+			staffGroup = jdbcTemplate.query(querySql, new StaffMapper());
+		} catch ( Exception e) {
+			// TODO: handle exception
+			LOGGER.info("get staff group failed ~", e);
+		}
+		return staffGroup;
 	}
 	
 	/**
