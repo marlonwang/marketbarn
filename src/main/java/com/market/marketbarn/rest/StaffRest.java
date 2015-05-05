@@ -8,6 +8,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -113,9 +114,10 @@ public class StaffRest
 	}
 	
 	/**
-	 * 
+	 * 用户登录
 	 * @param name
 	 * @param passwd
+	 * @addition 此处使用GET不妥
 	 */
 	@RequestMapping(value="market/manage/login",method = RequestMethod.GET)
 	public void login(@RequestParam(value = "name", required = true)String name,
@@ -131,15 +133,17 @@ public class StaffRest
 				if(passwd == iterator.next().getStaffPasswd())
 				{
 					LOGGER.info("staff: {} exist",name);
-					//TO DO
+					//TODO web前端调用 跳转 session什么的
 					break;
 				}
 				else 
 				{
 					LOGGER.info("staff: {} does not exist", name);
-					//TO DO
+					//TODO 前端页面调用 跳转
 				}
 			}
+		}else{
+			LOGGER.error("find staff failed ");
 		}
 	}
 	
@@ -154,33 +158,49 @@ public class StaffRest
 	 * @param phone
 	 * @param rank
 	 */
-	
-	// 此处应为put方法
-	@RequestMapping(value="market/manage/register",method = RequestMethod.GET)
-	public void StaffRegister(String name, int age, String password, String sex, String mail,
-			String phone, int rank)
+	@RequestMapping(value="market/manage/register",method = RequestMethod.PUT)
+	public void StaffRegister(@RequestBody String registerInfo)
 	{
-		if(StringUtils.isEmpty(name))
-			LOGGER.error("sign in staff's name is null");
-		
-		StaffInfo staff = new StaffInfo();
-		
-		staff.setStaffName(name);
-		staff.setStaffAge(age);
-		staff.setStaffPsswd(password);
-		staff.setStaffSex(sex);
-		staff.setStaffMail(mail);
-		staff.setStaffPhone(phone);
-		staff.setStaffRank(rank);
-		
-		if(staffService.appendStaff(staff))
+		if(StringUtils.isEmpty(registerInfo))
 		{
-			System.out.println("staff register success");
-			LOGGER.info("sign in staff succeed");
+			LOGGER.error("sign in staff's register info is null");
+			return ;
 		}
-		else{
-			LOGGER.error("sign in failed ~");
-		}
+		/*registerInfo 格式为
+			${name},${age},${passwd},${sex},${mail},${phone},${rank}
+			xiaoli,12,123456,女,123@123.com,13800001111,7
+		*/
+		try 
+		{
+			String[] str = registerInfo.split("[,]");
+			StaffInfo staff = new StaffInfo();
+			
+			staff.setStaffName(str[0]);
+			//为空时强转抛出异常
+			if( !StringUtils.isEmpty(str[1]) )
+				staff.setStaffAge(Integer.parseInt(str[1]));
+			
+			staff.setStaffPsswd(str[2]);
+			staff.setStaffSex(str[3]);
+			staff.setStaffMail(str[4]);
+			staff.setStaffPhone(str[5]);
+			
+			if(!StringUtils.isEmpty(str[6]))
+				staff.setStaffRank(Integer.parseInt(str[6]));
+			
+			if(staffService.appendStaff(staff))
+			{
+				System.out.println("staff register success");
+				LOGGER.info("staff register succeed");
+			}
+			else{
+				LOGGER.error("staff register failed ~");
+			}
+			
+		} catch (Exception e) 
+		{
+			LOGGER.error("register failed ", e);
+		}	
 	}
 
 }
