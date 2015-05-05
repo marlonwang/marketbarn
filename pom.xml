@@ -12,6 +12,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<springframework.version>4.1.0.RELEASE</springframework.version>
 		<ch.qos.logback.version>1.1.2</ch.qos.logback.version>
+		<jackson.version>2.4.0</jackson.version>
 		<spring.boot>1.1.4.RELEASE</spring.boot>
 		<release>release/</release>
 	</properties>
@@ -148,6 +149,24 @@
 			<version>2.2</version>
 		</dependency>
 		<!-- spring framework end -->
+		
+		<!-- json begin -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<!-- json end -->
 		
 		<!-- commons begin -->
 		<dependency>
