@@ -15,6 +15,11 @@ import org.springframework.stereotype.Repository;
 
 import com.market.marketbarn.model.StaffInfo;
 
+/**
+ * 员工信息数据库接口
+ * @author wangwei
+ * @date 2015-5-4
+ */
 @Repository
 public class StaffManageDao {
 	
@@ -23,7 +28,7 @@ public class StaffManageDao {
 	private JdbcTemplate jdbcTemplate;
 	
 	/**
-	 * 查询进货/出货人员
+	 * 查询进货/出货员工
 	 * @author wangwei
 	 * @param staffId
 	 * @exception database
@@ -34,18 +39,36 @@ public class StaffManageDao {
 	{
 		List<StaffInfo> staff = null;
 		
-		String querySql = "SELECT * FROM mkt_users WHERE u_id = " + staffId;
+		String querySql = "SELECT * FROM mkt_users WHERE u_id = ? ";
 		try{
-		staff = jdbcTemplate.query(querySql, new StaffMapper());
+		staff = jdbcTemplate.query(querySql, new Object[]{ staffId }, new StaffMapper());
 		}catch (Exception e)
 		{
-			LOGGER.error("Failed to find ipsec vpn list~", e);
+			LOGGER.info("Failed to find staff by id~", e);
 		}
 		return staff;
 	}
 	
 	/**
-	 * 查询所有人员
+	 * 根据姓名查找员工
+	 * @param staffName
+	 * @return StaffInfo
+	 */
+	public List<StaffInfo> getStaffByName(String staffName)
+	{
+		List<StaffInfo> staffList = null;
+		String querySql = "SELECT * FROM mkt_users WHERE u_name = ? ";
+		try {
+			staffList = jdbcTemplate.query(querySql, new Object[]{ staffName }, new StaffMapper());
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to find staff by name~", e);
+		}
+		return staffList;
+	}
+	
+	/**
+	 * 查询所有员工
 	 * @author wangwei
 	 * @param void
 	 * @return List<StaffInfo>
@@ -70,11 +93,11 @@ public class StaffManageDao {
 	 * 
 	 */
 	public List<StaffInfo> getStaffGroup(int staffRank){
-		staffRank = 0;	//default
+		//staffRank = 0;	//default
 		List<StaffInfo> staffGroup = null;
-		String querySql = "SELECT * FROM mkt_users WHERE u_is_admin = "+ staffRank ;
+		String querySql = "SELECT * FROM mkt_users WHERE u_is_admin = ? ";
 		try {
-			staffGroup = jdbcTemplate.query(querySql, new StaffMapper());
+			staffGroup = jdbcTemplate.query(querySql, new Object[] { staffRank },new StaffMapper());
 		} catch ( Exception e) {
 			// TODO: handle exception
 			LOGGER.info("get staff group failed ~", e);
@@ -83,9 +106,10 @@ public class StaffManageDao {
 	}
 	
 	/**
-	 * 添加进货/出货人员
+	 * 添加进货/出货员工
 	 * @param StaffInfo
 	 * @return 受影响的行数
+	 * @date 2015-4-28
 	 */
 	public int insertStaffInfo(StaffInfo staff){
 		int rows = 0;
@@ -95,11 +119,17 @@ public class StaffManageDao {
 			rows = jdbcTemplate.update(insertSql,new Object[]{staff.getStaffName(),staff.getStaffAge(),staff.getStaffPasswd(),
 					staff.getStaffSex(),staff.getStaffMail(),staff.getStaffPhone(),staff.getStaffRank()});
 		}catch(Exception e){
-			LOGGER.debug("Failed to insert staff into DB",e);
+			LOGGER.info("Failed to insert staff into DB ", e);
 		}
 		return rows;
 	}
 	
+	/**
+	 * 批量添加员工
+	 * @param StaffInfoQueue
+	 * @return void
+	 * @date 2015-4-28
+	 */
 	public void batchInsertStaffInfo(BlockingQueue<StaffInfo> StaffInfoQueue){
 		String insertSql = "INSERT INTO mkt_users (u_name,u_age,u_passwd,u_sex,u_mail,u_phone,u_is_admin)"
 				+"VALUES (?,?,?,?,?,?,?)";
@@ -128,9 +158,58 @@ public class StaffManageDao {
 	}
 	
 	/**
+	 * 根据员工id删除员工
+	 * @param staffId
+	 * @return int
+	 */
+	public int deleteStaffById(int staffId)
+	{
+		int rows = 0;
+		String delSql = "DELETE FROM mkt_users WHERE u_id = ? ";
+		try {
+			rows = jdbcTemplate.update(delSql,new Object[] { staffId });
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to delete staff ", e);
+		}
+		return rows;
+	}
+	
+	/**
+	 * 修改员工信息
+	 * @param staffInfo
+	 * @return rows
+	 * @date 2015-5-5
+	 */
+	public int updateStaffById(StaffInfo staff)
+	{
+		int rows = 0;
+		String updateSql = "UPDATE mkt_users SET u_name = ?, u_age = ?, u_passwd = ?, u_sex = ?, u_mail = ?, "
+				+ "u_phone = ?, u_is_admin = ? WHERE u_id = ? ";
+		try {
+			rows = jdbcTemplate.update(
+					updateSql, 
+					new Object[]{
+						staff.getStaffName(),
+						staff.getStaffAge(),
+						staff.getStaffPasswd(),
+						staff.getStaffSex(),
+						staff.getStaffMail(),
+						staff.getStaffPhone(),
+						staff.getStaffRank(),
+						staff.getStaffId()	});
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to update staff info ", e);
+		}
+		return rows;
+	} 
+	
+	/**
 	 * 映射数据库表的字段到StaffInfo
 	 * @param 
 	 * @author wangwei
+	 * @date 2015-4-28
 	 */
 	class StaffMapper implements RowMapper<StaffInfo>
 	{
