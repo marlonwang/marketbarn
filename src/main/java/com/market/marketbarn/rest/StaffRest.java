@@ -8,6 +8,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +33,12 @@ public class StaffRest
 	// 日志记录
 	private static final Logger LOGGER = LoggerFactory.getLogger(StaffRest.class);
 	
-	//enum Rank {manager,inclerk,outclerk,masses };
+	@Autowired
+	private StaffService staffService;
+	
+	/* enum Rank {manager,inclerk,outclerk,masses };
+	 * java自定义枚举 及 枚举的值
+	 */
 	public enum Rank
 	{
 	     manager(7), inclerk(2), outclerk(1), masses(0);
@@ -45,9 +51,6 @@ public class StaffRest
 	         return _value;
 	     }
 	 }
-	
-	@Autowired
-	private StaffService staffService;
 	
 	/**
 	 * 查询员工
@@ -202,5 +205,90 @@ public class StaffRest
 			LOGGER.error("register failed ", e);
 		}	
 	}
+	
+	/**
+	 * 员工辞职 删除员工信息
+	 * @param staffId
+	 * @return void
+	 */
+	@RequestMapping(value="market/manage/resign/{staffId}",method = RequestMethod.DELETE)
+	public void staffResign(@PathVariable int staffId)
+	{
+		LOGGER.info("resign staff, staff id :{}",staffId);
+		if(!CollectionUtils.isEmpty(staffService.findStaff(staffId)) )
+		{
+			if(staffService.deleteStaffInfo(staffId))
+				LOGGER.info("resign staff completed.");
+			else 
+				LOGGER.info("delete staff id {} failed.",staffId);
+		}
+		else{
+			LOGGER.error("No such staff found ");
+		}
+	}
+	
+	/**
+	 * 修改员工信息
+	 * @param staffId
+	 * @param staffStr
+	 * @return null
+	 */
+	@RequestMapping(value="market/manage/alter/{staffId}",method = RequestMethod.PUT)
+	public void reviseStaffInfo(@PathVariable int staffId, @RequestBody String staffStr)
+	{
+		LOGGER.info("alter staff information , staff id :{}", staffId);
+		
+		/*	staffStr 格式为
+			${name},${age},${passwd},${sex},${mail},${phone},${rank}
+			xiaoli,12,123456,女,123@123.com,13800001111,7
+		 */
+		if(StringUtils.isEmpty(staffStr)){
+			LOGGER.error("new information is empty");
+			return ;
+		}
+		else if(!StringUtils.isEmpty(staffStr) && staffId > 0)
+		{
+			try 
+			{
+				String[] str = staffStr.split("[,]");
+				StaffInfo staff = new StaffInfo();
+				
+				staff.setStaffName(str[0]);
+				//为空时强转抛出异常
+				if( !StringUtils.isEmpty(str[1]) )
+					staff.setStaffAge(Integer.parseInt(str[1]));
+				
+				staff.setStaffPsswd(str[2]);
+				staff.setStaffSex(str[3]);
+				staff.setStaffMail(str[4]);
+				staff.setStaffPhone(str[5]);
+				
+				if(!StringUtils.isEmpty(str[6]))
+					staff.setStaffRank(Integer.parseInt(str[6]));
+				//被修改员工id
+				staff.setStaffId(staffId);
+				
+				if(!CollectionUtils.isEmpty(staffService.findStaff(staffId)) )
+				{
+					if(staffService.deleteStaffInfo(staffId))
+					{
+						LOGGER.info("alter staff information succeed");
+					}
+					else {
+						LOGGER.error("delete staff failed ~");
+					}
+				}
+				else{
+					LOGGER.error("staff {} does not exists ~", staffId);
+				}
+				
+			} catch (Exception e) 
+			{
+				LOGGER.error("delete staff failed ~", e);
+			}
+		}
+	}
+	
+	///////////////////////////
 
 }

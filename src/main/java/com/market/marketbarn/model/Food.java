@@ -1,6 +1,6 @@
 package com.market.marketbarn.model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /*  食物
  * 	fd_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -62,7 +62,7 @@ public class Food {
 	private String email;
 	
 	// 生产日期
-	private Date produceDate;
+	private Timestamp produceDate;
 	
 	// 食品成分
 	private String ingredient;
@@ -174,11 +174,11 @@ public class Food {
 		this.email = email;
 	}
 
-	public Date getProduceDate() {
+	public Timestamp getProduceDate() {
 		return produceDate;
 	}
 
-	public void setProduceDate(Date produceDate) {
+	public void setProduceDate(Timestamp produceDate) {
 		this.produceDate = produceDate;
 	}
 

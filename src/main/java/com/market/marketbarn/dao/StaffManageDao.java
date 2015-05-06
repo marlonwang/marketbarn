@@ -39,7 +39,7 @@ public class StaffManageDao {
 	{
 		List<StaffInfo> staff = null;
 		
-		String querySql = "SELECT * FROM mkt_users WHERE u_id = ? ";
+		String querySql = "SELECT * FROM mkt_users WHERE u_id = ? LIMIT 1";
 		try{
 		staff = jdbcTemplate.query(querySql, new Object[]{ staffId }, new StaffMapper());
 		}catch (Exception e)
@@ -152,7 +152,7 @@ public class StaffManageDao {
 			}
 			jdbcTemplate.batchUpdate(insertSql, batch);
 		}catch(Exception e){
-			LOGGER.info("batch insert failed ~");
+			LOGGER.info("batch insert failed ~", e);
 		}
 		
 	}
