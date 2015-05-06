@@ -239,7 +239,7 @@ public class FoodManageDao {
 			food.setDescription(rs.getString("fd_description"));
 			food.setCapacity(rs.getString("fd_capacity"));
 			food.setStatus(rs.getString("fd_status"));
-			food.setIsQualified((byte) rs.getShort("fd_is_qualified"));
+			food.setIsQualified(rs.getByte("fd_is_qualified"));
 			food.setStandard(rs.getString("fd_perform_standard"));
 			food.setProducer(rs.getString("fd_producer"));
 			food.setAddress(rs.getString("fd_producer_addr"));
