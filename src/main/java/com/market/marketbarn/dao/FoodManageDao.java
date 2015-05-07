@@ -90,9 +90,9 @@ public class FoodManageDao {
 	public List<Food> getFoodByStatus(String status)
 	{
 		List<Food> foodList = null;
-		String querySql = "SELECT * FROM mkt_items_food WHERE fd_status = " + status ;
+		String querySql = "SELECT * FROM mkt_items_food WHERE fd_status = ? ";
 		try {
-			foodList = jdbcTemplate.query(querySql, new FoodMapper());
+			foodList = jdbcTemplate.query(querySql, new Object[]{ status }, new FoodMapper());
 		} catch (Exception e) {
 			LOGGER.info("failed to find food by status ~", e);
 		}
@@ -111,9 +111,24 @@ public class FoodManageDao {
 				+ "fd_is_qualified, fd_perform_standard, fd_producer, fd_producer_addr, fd_producer_phone, fd_producer_mail, "
 				+ "fd_produced_time, fd_ingredient, fd_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
 		try {
-			rows = jdbcTemplate.update(insertSql, new Object[]{food.getFoodName(),food.getFoodCode(),food.getBarcode(),food.getDescription(),
-					food.getCapacity(),food.getStatus(),food.getIsQualified(),food.getStandard(),food.getProducer(),food.getAddress(),
-					food.getTelnumber(),food.getEmail(),food.getProduceDate(),food.getIngredient(),food.getAddition()} );
+			rows = jdbcTemplate.update(insertSql, 
+					new Object[]{
+					food.getFoodName(),
+					food.getFoodCode(),
+					food.getBarcode(),
+					food.getDescription(),
+					food.getCapacity(),
+					food.getStatus(),
+					food.getIsQualified(),
+					food.getStandard(),
+					food.getProducer(),
+					food.getAddress(),
+					food.getTelnumber(),
+					food.getEmail(),
+					food.getProduceDate(),
+					food.getIngredient(),
+					food.getAddition()} 
+			);
 		} catch (Exception e) {
 			LOGGER.info("failed to insert food info ~", e);
 		}
@@ -170,7 +185,7 @@ public class FoodManageDao {
 	public int deleteFoodById(int foodId)
 	{
 		int rows = 0;
-		String delSql = "DELETE FROM mkt_items_food WHERE fd_id = ? LIMIT 1 ";
+		String delSql = "DELETE FROM mkt_items_food WHERE fd_id = ? ";
 		try {
 			rows = jdbcTemplate.update(delSql, new Object[]{ foodId });
 		} catch (Exception e) {

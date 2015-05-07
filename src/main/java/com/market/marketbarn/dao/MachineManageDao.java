@@ -2,7 +2,9 @@ package com.market.marketbarn.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,13 @@ public class MachineManageDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
+	/**
+	 * 查询电器表中的所有电器信息
+	 * @param 
+	 * @date 2015-5-7
+	 * @return
+	 * @exception
+	 */
 	public List<Machine> getAllMachines()
 	{
 		List<Machine> machineList = null;
@@ -40,26 +49,213 @@ public class MachineManageDao {
 		return machineList;
 	}
 	
-	/*  电器信息
-	 * 	mc_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-		mc_name VARCHAR(50) NOT NULL,
-		mc_code CHAR(5),
-		mc_barcode CHAR(13),
-		mc_description TEXT,
-		mc_size VARCHAR(20) COMMENT '尺寸—l-w-h',
-		mc_status ENUM("在库","出库","损坏","丢失"),
-		mc_is_qualified TINYINT(1),
-		mc_perform_standard VARCHAR(15),
-		mc_producer CHAR(50),
-		mc_producer_addr VARCHAR(100),
-		mc_producer_phone VARCHAR(15),
-		mc_producer_mail VARCHAR(50),
-		mc_produced_time TIMESTAMP DEFAULT NOW(),
-		mc_voltage VARCHAR(20) COMMENT '电压',
-		mc_current VARCHAR(20) COMMENT '电流',
-		mc_material VARCHAR(50) COMMENT '材质',
-		mc_addition TEXT
+	/**
+	 * 根据id查找单个电器信息
+	 * @param machineId
+	 * @return
+	 * @exception
 	 */
+	public Machine getMachineById(int machineId)
+	{
+		Machine machine = null;
+		String querySql = "SELECT * FROM mkt_items_machine WHERE mc_id = ? LIMIT 1";
+		try {
+			machine = jdbcTemplate.queryForObject(querySql, new Object[]{ machineId }, new MachineMapper());
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to find machine by id ~",e);
+		}
+		return machine;
+	}
+	
+	/**
+	 * 根据电器名称获取电器列表
+	 * @param machineName
+	 * @return
+	 * @exception
+	 */
+	public List<Machine> getMachineByName(String machineName)
+	{
+		List<Machine> machineList = null;
+		String querySql = "SELECT * FROM mkt_items_machine WHERE mc_name = ? ";
+		try {
+			machineList = jdbcTemplate.query(querySql, new Object[]{ machineName }, new MachineMapper());
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to  find machine by name ~",e);
+		}
+		return machineList;
+	}
+	
+	/**
+	 * 根据状态查询电器信息列表
+	 * @param status
+	 * @return
+	 * @exception
+	 */
+	public List<Machine> getMachineByStatus(String status)
+	{
+		List<Machine> machineList = null;
+		String querySql = "SELECT * FROM mkt_items_machine WHERE mc_status = ? ";
+		try {
+			machineList = jdbcTemplate.query(querySql, new Object[]{ status }, new MachineMapper());
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to find machine list by status");
+		}
+		return machineList;
+	}
+	
+	/**
+	 * 添加电器信息
+	 * @param machine
+	 * @return
+	 * @exception
+	 */
+	public int insertMachineInfo(Machine machine)
+	{
+		int rows = 0;
+		String insertSql = "INSERT INTO mkt_items_machine ( mc_name, mc_code, mc_barcode, mc_description, mc_size, "
+				+ "mc_status, mc_is_qualified, mc_perform_standard, mc_producer, mc_producer_addr, mc_producer_phone, "
+				+ "mc_producer_mail, mc_produced_time, mc_voltage, mc_current, mc_material, mc_addition) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+		try {
+			rows = jdbcTemplate.update(insertSql,
+					new Object[]{
+					machine.getMachineName(),
+					machine.getMachineCode(),
+					machine.getBarcode(),
+					machine.getDescription(),
+					machine.getSize(),
+					machine.getStatus(),
+					machine.getIsQualified(),
+					machine.getStandard(),
+					machine.getProducer(),
+					machine.getAddress(),
+					machine.getTelnumber(),
+					machine.getEmail(),
+					machine.getProduceDate(),
+					machine.getVoltage(),
+					machine.getCurrent(),
+					machine.getMaterial(),
+					machine.getAddition()
+			});
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to insert machine into DB ~", e);
+		}
+		return rows;
+	}
+	
+	/**
+	 * 批量添加电器信息
+	 * @param machineQueue
+	 * @return void
+	 * @exception
+	 */
+	public void batchInsertMachineInfo(BlockingQueue<Machine> machineQueue)
+	{
+
+		String insertSql = "INSERT INTO mkt_items_machine ( mc_name, mc_code, mc_barcode, mc_description, mc_size, "
+				+ "mc_status, mc_is_qualified, mc_perform_standard, mc_producer, mc_producer_addr, mc_producer_phone, "
+				+ "mc_producer_mail, mc_produced_time, mc_voltage, mc_current, mc_material, mc_addition) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+		
+		List<Object[]> batch = new ArrayList<Object[]>();
+		
+		try {
+			while(!machineQueue.isEmpty())
+			{
+				Machine machine = machineQueue.take();
+				Object[] values =new Object[]{
+						machine.getMachineName(),
+						machine.getMachineCode(),
+						machine.getBarcode(),
+						machine.getDescription(),
+						machine.getSize(),
+						machine.getStatus(),
+						machine.getIsQualified(),
+						machine.getStandard(),
+						machine.getProducer(),
+						machine.getAddress(),
+						machine.getTelnumber(),
+						machine.getEmail(),
+						machine.getProduceDate(),
+						machine.getVoltage(),
+						machine.getCurrent(),
+						machine.getMaterial(),
+						machine.getAddition()
+				};
+				batch.add(values);
+			}
+			jdbcTemplate.batchUpdate(insertSql,batch);
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("batch insert failed ~", e);
+		}
+
+	}
+	
+	/**
+	 * 根据电器id删除电器信息
+	 * @param machineId
+	 * @return
+	 * @exception
+	 */
+	public int deleteMachineById(int machineId)
+	{
+		int rows = 0;
+		String delSql = "DELETE FROM mkt_items_machine WHERE mc_id = ? ";
+		try {
+			rows = jdbcTemplate.update(delSql, new Object[]{ machineId });
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to delete machine by id ~",e);
+		}
+		return rows;
+	}
+	
+	/**
+	 * 根据
+	 * @param machine
+	 * @return
+	 */
+	public int updateMachineInfoById(Machine machine)
+	{
+		int rows = 0;
+		String updateSql = "UPDATE mkt_items_machine SET  mc_name = ?, mc_code = ?, mc_barcode = ?, mc_description = ?, "
+				+ "mc_size = ?, mc_status = ?, mc_is_qualified = ?, mc_perform_standard = ?, mc_producer = ?, "
+				+ "mc_producer_addr = ?, mc_producer_phone = ?, mc_producer_mail = ?, mc_produced_time = ?, mc_voltage = ?, "
+				+ "mc_current = ?, mc_material = ?, mc_addition = ? WHERE mc_id = ? ";
+		try {
+			rows = jdbcTemplate.update(
+					updateSql, 
+					new  Object[]{
+							machine.getMachineName(),
+							machine.getMachineCode(),
+							machine.getBarcode(),
+							machine.getDescription(),
+							machine.getSize(),
+							machine.getStatus(),
+							machine.getIsQualified(),
+							machine.getStandard(),
+							machine.getProducer(),
+							machine.getAddress(),
+							machine.getTelnumber(),
+							machine.getEmail(),
+							machine.getProduceDate(),
+							machine.getVoltage(),
+							machine.getCurrent(),
+							machine.getMaterial(),
+							machine.getAddition(),
+							machine.getMachineId()
+					});
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to update machine info ~", e);
+		}
+		return rows;
+	}
 	
 	/**
 	 * 映射数据库machine表到 电器类
