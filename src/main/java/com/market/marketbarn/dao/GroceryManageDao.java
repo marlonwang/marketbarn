@@ -2,8 +2,11 @@ package com.market.marketbarn.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +102,141 @@ public class GroceryManageDao {
 		return groceryList;
 	}
 	
+	/**
+	 * 添加百货信息
+	 * @param grocery
+	 * @return
+	 */
+	public int insertGroceryInfo(Grocery grocery)
+	{
+		int rows = 0;
+		String insertSql = "INSERT INTO mkt_items_groceries (gc_name, gc_code, gc_barcode, gc_description, gc_spec, gc_status, "
+				+ "gc_is_qualified, gc_perform_standard, gc_producer, gc_producer_addr, gc_producer_phone, gc_producer_mail, gc_produced_time, "
+				+ "gc_ingredient, gc_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		try {
+			rows = jdbcTemplate.update(insertSql, 
+					new Object[]{
+					grocery.getGroceryName(),
+					grocery.getGroceryCode(),
+					grocery.getBarcode(),
+					grocery.getDescription(),
+					grocery.getSpecific(),
+					grocery.getStatus(),
+					grocery.getIsQualified(),
+					grocery.getStandard(),
+					grocery.getProducer(),
+					grocery.getAddress(),
+					grocery.getTelnumber(),
+					grocery.getEmail(),
+					grocery.getProduceDate(),
+					grocery.getComponent(),
+					grocery.getAddition()
+			});
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to insert grocery info ~", e);
+		}
+		return rows;
+	}
+	
+	/**
+	 * 批量添加百货信息
+	 * @param groceryQueue
+	 */
+	public void batchInsertGroceryInfo(BlockingQueue<Grocery> groceryQueue)
+	{
+		String insertSql = "INSERT INTO mkt_items_groceries (gc_name, gc_code, gc_barcode, gc_description, gc_spec, gc_status, "
+				+ "gc_is_qualified, gc_perform_standard, gc_producer, gc_producer_addr, gc_producer_phone, gc_producer_mail, gc_produced_time, "
+				+ "gc_ingredient, gc_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		
+		List<Object[]> batch = new ArrayList<Object[]>();
+		try {
+			while(!CollectionUtils.isEmpty(groceryQueue))
+			{
+				Grocery grocery = groceryQueue.take();
+				Object[] values = new Object[]{
+						grocery.getGroceryName(),
+						grocery.getGroceryCode(),
+						grocery.getBarcode(),
+						grocery.getDescription(),
+						grocery.getSpecific(),
+						grocery.getStatus(),
+						grocery.getIsQualified(),
+						grocery.getStandard(),
+						grocery.getProducer(),
+						grocery.getAddress(),
+						grocery.getTelnumber(),
+						grocery.getEmail(),
+						grocery.getProduceDate(),
+						grocery.getComponent(),
+						grocery.getAddition()
+				};
+				batch.add(values);
+			}
+			jdbcTemplate.batchUpdate(insertSql, batch);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("bach insert grocery information failed ~", e);
+		}
+	}
+	
+	/**
+	 * 删除对应id的百货信息
+	 * @param groceryId
+	 * @return int
+	 */
+	public int deleteGroceryByid(int groceryId)
+	{
+		int rows = 0;
+		String delSql = "DELETE FROM mkt_items_groceries WHERE gc_id = ? ";
+		try {
+			jdbcTemplate.update(delSql, new Object[]{ groceryId });
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("delete grocery by id failed ~", e);
+		}
+		return rows;
+	}
+	
+	/**
+	 * 更改指定id的百货信息
+	 * @param grocery
+	 * @return int
+	 */
+	public int updateGroceryById(Grocery grocery)
+	{
+		int rows = 0;
+		String updateSql = "UPDATE mkt_items_groceries SET gc_name = ?, gc_code = ?, gc_barcode = ?, gc_description = ?, gc_spec = ?, "
+				+ "gc_status = ?, gc_is_qualified = ?, gc_perform_standard = ?, gc_producer = ?, gc_producer_addr = ?, gc_producer_phone = ?, "
+				+ "gc_producer_mail = ?, gc_produced_time = ?, gc_ingredient = ?, gc_addition = ? WHERE gc_id = ?";
+		try {
+			rows = jdbcTemplate.update(updateSql, 
+					new Object[]{
+					grocery.getGroceryName(),
+					grocery.getGroceryCode(),
+					grocery.getBarcode(),
+					grocery.getDescription(),
+					grocery.getSpecific(),
+					grocery.getStatus(),
+					grocery.getIsQualified(),
+					grocery.getStandard(),
+					grocery.getProducer(),
+					grocery.getAddress(),
+					grocery.getTelnumber(),
+					grocery.getEmail(),
+					grocery.getProduceDate(),
+					grocery.getComponent(),
+					grocery.getAddition(),
+					grocery.getGroceryId()
+			});
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to update grocery by id ~",e);
+		}
+		return rows;
+	}
 /*	
 	gc_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	gc_name VARCHAR(50) NOT NULL,
