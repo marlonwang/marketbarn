@@ -87,7 +87,7 @@ public class StockInfoDao {
 	
 	/**
 	 * 查询指定日前的 进货信息
-	 * @param dateStr
+	 * @param dateStr 截止日期
 	 * @return
 	 */
 	public List<StockInfo> getStockBeforeDate(String dateStr)
@@ -105,7 +105,7 @@ public class StockInfoDao {
 	
 	/**
 	 * 查询指定日期后的进货详情
-	 * @param dateStr
+	 * @param dateStr 起始日期
 	 * @return
 	 */
 	public List<StockInfo> getStockAfterDate(String dateStr)
@@ -125,7 +125,7 @@ public class StockInfoDao {
 	/**
 	 * 映射进货表字段到StockInfo类
 	 * @author wangwei
-	 *
+	 * @return StockInfo
 	 */
 	class StockMapper implements RowMapper<StockInfo>
 	{

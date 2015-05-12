@@ -78,6 +78,8 @@ public class CategoryDao {
 		return category;
 	}
 	
+	
+	
 	/**
 	 * 添加类别信息
 	 * @param category
