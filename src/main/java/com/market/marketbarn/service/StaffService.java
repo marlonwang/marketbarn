@@ -26,7 +26,7 @@ public class StaffService
 	private StaffManageDao staffMngDao;
 	
 	/**
-	 * 添加
+	 * 添加单个员工
 	 * @param staff
 	 * @return
 	 */
@@ -50,7 +50,8 @@ public class StaffService
 	}
 	
 	/**
-	 * 默认无参全部员工
+	 * 查询全部员工
+	 * @param
 	 * @return List<StaffInfo>
 	 */
 	public List<StaffInfo> findStaff(){
@@ -67,8 +68,8 @@ public class StaffService
 	 * @param staffId
 	 * @return List<StaffInfo>
 	 */
-	public List<StaffInfo> findStaff(int id){
-		List<StaffInfo> staffList = null;
+	public StaffInfo findStaff(int id){
+		StaffInfo staffList = null;
 		staffList = staffMngDao.getStaffById(id);
 		if(null == staffList)
 			LOGGER.info("empty staff list");

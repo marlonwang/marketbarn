@@ -2,7 +2,9 @@ package com.market.marketbarn.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,6 +123,65 @@ public class StockInfoDao {
 		return stockList;
 	}
 	
+	/**
+	 * 添加进货信息到进货表
+	 * @param stock 
+	 * @return int 受影响行数
+	 */
+	public int insertStockInfo(StockInfo stock)
+	{
+		int rows = 0;
+		String insertSql = "INSERT INTO mkt_in_items (in_item_id,in_item_code,in_get_price,in_get_quantity,"
+				+ "in_get_flag,in_get_worker) VALUES (?, ?, ?, ?, ?, ?)";
+		try {
+			rows = jdbcTemplate.update(
+					insertSql, 
+					new Object[]{
+							stock.getItemId(),
+							stock.getItemCategoryCode(),
+							stock.getStockPrice(),
+							stock.getStockQuantity(),
+							stock.getBatchFlag(),
+							stock.getOperator()
+					});
+			} catch (Exception e) {
+			// TODO: handle exception
+				LOGGER.info("failed to insert stock info ~",e);
+		}
+		return rows;
+	}
+	
+	/**
+	 * 批量添加进货信息到进货表
+	 * @param stockQueue
+	 * @return void
+	 */
+	public void batchInsertStockInfo(BlockingQueue<StockInfo> stockQueue)
+	{
+		String insertSql = "INSERT INTO mkt_in_items (in_item_id,in_item_code,in_get_price,in_get_quantity,"
+				+ "in_get_flag,in_get_worker) VALUES (?, ?, ?, ?, ?, ?)";
+		List<Object[]> batch = new ArrayList<Object[]>();
+		
+		try {
+			while(!stockQueue.isEmpty())
+			{
+				StockInfo stock = stockQueue.take();
+				Object[] values = new Object[]{
+						stock.getItemId(),
+						stock.getItemCategoryCode(),
+						stock.getStockPrice(),
+						stock.getStockQuantity(),
+						stock.getBatchFlag(),
+						stock.getOperator()
+				};
+				batch.add(values);
+			}
+			jdbcTemplate.batchUpdate(insertSql, batch);
+		} catch (Exception e) {
+			// TODO: handle exception
+			LOGGER.info("failed to insert batch stock info ~",e);
+		}
+	}
 	
 	/**
 	 * 映射进货表字段到StockInfo类

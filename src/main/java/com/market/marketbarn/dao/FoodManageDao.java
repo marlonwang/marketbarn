@@ -107,9 +107,9 @@ public class FoodManageDao {
 	public int inserFoodInfo(Food food)
 	{
 		int rows = 0;
-		String insertSql = "INSERT INTO mkt_items_food (fd_name, fd_code, fd_barcode, fd_description, fd_capacity, fd_status, "
+		String insertSql = "INSERT INTO mkt_items_food (fd_name, fd_code, fd_barcode, fd_description, fd_capacity, "
 				+ "fd_is_qualified, fd_perform_standard, fd_producer, fd_producer_addr, fd_producer_phone, fd_producer_mail, "
-				+ "fd_produced_time, fd_ingredient, fd_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+				+ "fd_produced_time, fd_ingredient, fd_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
 		try {
 			rows = jdbcTemplate.update(insertSql, 
 					new Object[]{
@@ -118,7 +118,6 @@ public class FoodManageDao {
 					food.getBarcode(),
 					food.getDescription(),
 					food.getCapacity(),
-					food.getStatus(),
 					food.getIsQualified(),
 					food.getStandard(),
 					food.getProducer(),
@@ -142,9 +141,9 @@ public class FoodManageDao {
 	 */
 	public void batchInsertFoodInfo(BlockingQueue<Food> foodQueue)
 	{
-		String insertSql = "INSERT INTO mkt_items_food (fd_name, fd_code, fd_barcode, fd_description, fd_capacity, fd_status, "
+		String insertSql = "INSERT INTO mkt_items_food (fd_name, fd_code, fd_barcode, fd_description, fd_capacity, "
 				+ "fd_is_qualified, fd_perform_standard, fd_producer, fd_producer_addr, fd_producer_phone, fd_producer_mail, "
-				+ "fd_produced_time, fd_ingredient, fd_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+				+ "fd_produced_time, fd_ingredient, fd_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
 		
 		List<Object[]> batch = new ArrayList<Object[]>();
 		
@@ -157,7 +156,6 @@ public class FoodManageDao {
 						food.getBarcode(),
 						food.getDescription(),
 						food.getCapacity(),
-						food.getStatus(),
 						food.getIsQualified(),
 						food.getStandard(),
 						food.getProducer(),
@@ -204,7 +202,7 @@ public class FoodManageDao {
 	{
 		int rows = 0;
 		String updateSql = "UPDATE mkt_items_food SET fd_name = ?, fd_code = ?, fd_barcode = ?, fd_description = ?, "
-				+ "fd_capacity = ?, fd_status = ?, fd_is_qualified = ?, fd_perform_standard = ?, fd_producer = ?, "
+				+ "fd_capacity = ?, fd_is_qualified = ?, fd_perform_standard = ?, fd_producer = ?, "
 				+ "fd_producer_addr = ?, fd_producer_phone = ?, fd_producer_mail = ?, fd_produced_time = ?, "
 				+ "fd_ingredient = ?, fd_addition = ? WHERE fd_id = ? ";
 		try {
@@ -216,7 +214,6 @@ public class FoodManageDao {
 							food.getBarcode(),
 							food.getDescription(),
 							food.getCapacity(),
-							food.getStatus(),
 							food.getIsQualified(),
 							food.getStandard(),
 							food.getProducer(),
@@ -253,7 +250,6 @@ public class FoodManageDao {
 			food.setBarcode(rs.getString("fd_barcode"));
 			food.setDescription(rs.getString("fd_description"));
 			food.setCapacity(rs.getString("fd_capacity"));
-			food.setStatus(rs.getString("fd_status"));
 			food.setIsQualified(rs.getByte("fd_is_qualified"));
 			food.setStandard(rs.getString("fd_perform_standard"));
 			food.setProducer(rs.getString("fd_producer"));

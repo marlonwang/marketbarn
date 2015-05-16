@@ -116,9 +116,9 @@ public class MachineManageDao {
 	{
 		int rows = 0;
 		String insertSql = "INSERT INTO mkt_items_machine ( mc_name, mc_code, mc_barcode, mc_description, mc_size, "
-				+ "mc_status, mc_is_qualified, mc_perform_standard, mc_producer, mc_producer_addr, mc_producer_phone, "
+				+ "mc_is_qualified, mc_perform_standard, mc_producer, mc_producer_addr, mc_producer_phone, "
 				+ "mc_producer_mail, mc_produced_time, mc_voltage, mc_current, mc_material, mc_addition) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 		try {
 			rows = jdbcTemplate.update(insertSql,
 					new Object[]{
@@ -127,7 +127,6 @@ public class MachineManageDao {
 					machine.getBarcode(),
 					machine.getDescription(),
 					machine.getSize(),
-					machine.getStatus(),
 					machine.getIsQualified(),
 					machine.getStandard(),
 					machine.getProducer(),
@@ -157,9 +156,9 @@ public class MachineManageDao {
 	{
 
 		String insertSql = "INSERT INTO mkt_items_machine ( mc_name, mc_code, mc_barcode, mc_description, mc_size, "
-				+ "mc_status, mc_is_qualified, mc_perform_standard, mc_producer, mc_producer_addr, mc_producer_phone, "
+				+ "mc_is_qualified, mc_perform_standard, mc_producer, mc_producer_addr, mc_producer_phone, "
 				+ "mc_producer_mail, mc_produced_time, mc_voltage, mc_current, mc_material, mc_addition) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 		
 		List<Object[]> batch = new ArrayList<Object[]>();
 		
@@ -173,7 +172,6 @@ public class MachineManageDao {
 						machine.getBarcode(),
 						machine.getDescription(),
 						machine.getSize(),
-						machine.getStatus(),
 						machine.getIsQualified(),
 						machine.getStandard(),
 						machine.getProducer(),
@@ -224,7 +222,7 @@ public class MachineManageDao {
 	{
 		int rows = 0;
 		String updateSql = "UPDATE mkt_items_machine SET  mc_name = ?, mc_code = ?, mc_barcode = ?, mc_description = ?, "
-				+ "mc_size = ?, mc_status = ?, mc_is_qualified = ?, mc_perform_standard = ?, mc_producer = ?, "
+				+ "mc_size = ?, mc_is_qualified = ?, mc_perform_standard = ?, mc_producer = ?, "
 				+ "mc_producer_addr = ?, mc_producer_phone = ?, mc_producer_mail = ?, mc_produced_time = ?, mc_voltage = ?, "
 				+ "mc_current = ?, mc_material = ?, mc_addition = ? WHERE mc_id = ? ";
 		try {
@@ -236,7 +234,6 @@ public class MachineManageDao {
 							machine.getBarcode(),
 							machine.getDescription(),
 							machine.getSize(),
-							machine.getStatus(),
 							machine.getIsQualified(),
 							machine.getStandard(),
 							machine.getProducer(),
@@ -277,7 +274,6 @@ public class MachineManageDao {
 			machine.setBarcode(rs.getString("mc_barcode"));
 			machine.setDescription(rs.getString("mc_description"));
 			machine.setSize(rs.getString("mc_size"));
-			machine.setStatus(rs.getString("mc_status"));
 			machine.setIsQualified(rs.getByte("mc_is_qualified"));
 			machine.setStandard(rs.getString("mc_perform_standard"));
 			machine.setProducer(rs.getString("mc_producer"));

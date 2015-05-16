@@ -22,6 +22,10 @@ public class CategoryService {
 	@Autowired
 	private CategoryDao categoryDao;
 	
+	/**
+	 * 查找所有商品类别
+	 * @return
+	 */
 	public List<ItemCategory> findAllCategories()
 	{
 		List<ItemCategory> categoryList = categoryDao.getAllCategory();
@@ -29,6 +33,11 @@ public class CategoryService {
 		return categoryList;
 	}
 	
+	/**
+	 * 根据类别名查询
+	 * @param categoryName
+	 * @return
+	 */
 	public ItemCategory findCategoryByName(String categoryName)
 	{
 		ItemCategory category = categoryDao.getCategoryCodeByName(categoryName);

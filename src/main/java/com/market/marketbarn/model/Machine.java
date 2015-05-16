@@ -9,7 +9,7 @@ import java.sql.Date;
 	mc_barcode CHAR(13),
 	mc_description TEXT,
 	mc_size VARCHAR(20) COMMENT '尺寸—l-w-h',
-	mc_status ENUM("在库","出库","损坏","丢失"),
+
 	mc_is_qualified TINYINT(1),
 	mc_perform_standard VARCHAR(15),
 	mc_producer CHAR(50),
@@ -42,10 +42,7 @@ public class Machine {
 	
 	// 电器 大小 尺寸
 	private String size;
-	
-	// 电器 库存状态
-	private String status;
-	
+
 	// 是否合格
 	private byte isQualified;
 	
@@ -157,14 +154,6 @@ public class Machine {
 
 	public void setSize(String size) {
 		this.size = size;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public byte getIsQualified() {

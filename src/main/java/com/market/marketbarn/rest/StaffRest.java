@@ -84,7 +84,7 @@ public class StaffRest
 		// 不妥之处 Integer.parseInt(userId)强转会出现异常
 		else if(Integer.parseInt(userId) > 0)
 		{
-			staffLists = staffService.findStaff(Integer.parseInt(userId));
+			staffLists.add(staffService.findStaff(Integer.parseInt(userId)));
 			result.setResultData(staffLists);
 			result.setResultStatus(true);
 		}
@@ -215,7 +215,7 @@ public class StaffRest
 	public void staffResign(@PathVariable int staffId)
 	{
 		LOGGER.info("resign staff, staff id :{}",staffId);
-		if(!CollectionUtils.isEmpty(staffService.findStaff(staffId)) )
+		if(null != staffService.findStaff(staffId) )
 		{
 			if(staffService.deleteStaffInfo(staffId))
 				LOGGER.info("resign staff completed.");
@@ -268,7 +268,7 @@ public class StaffRest
 				//被修改员工id
 				staff.setStaffId(staffId);
 				
-				if(!CollectionUtils.isEmpty(staffService.findStaff(staffId)) )
+				if(null != staffService.findStaff(staffId))
 				{
 					if(staffService.deleteStaffInfo(staffId))
 					{

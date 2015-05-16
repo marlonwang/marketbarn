@@ -110,9 +110,9 @@ public class GroceryManageDao {
 	public int insertGroceryInfo(Grocery grocery)
 	{
 		int rows = 0;
-		String insertSql = "INSERT INTO mkt_items_groceries (gc_name, gc_code, gc_barcode, gc_description, gc_spec, gc_status, "
-				+ "gc_is_qualified, gc_perform_standard, gc_producer, gc_producer_addr, gc_producer_phone, gc_producer_mail, gc_produced_time, "
-				+ "gc_ingredient, gc_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String insertSql = "INSERT INTO mkt_items_groceries (gc_name, gc_code, gc_barcode, gc_description, gc_spec, gc_is_qualified, "
+				+ "gc_perform_standard, gc_producer, gc_producer_addr, gc_producer_phone, gc_producer_mail, gc_produced_time, "
+				+ "gc_ingredient, gc_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
 			rows = jdbcTemplate.update(insertSql, 
 					new Object[]{
@@ -121,7 +121,6 @@ public class GroceryManageDao {
 					grocery.getBarcode(),
 					grocery.getDescription(),
 					grocery.getSpecific(),
-					grocery.getStatus(),
 					grocery.getIsQualified(),
 					grocery.getStandard(),
 					grocery.getProducer(),
@@ -146,9 +145,9 @@ public class GroceryManageDao {
 	 */
 	public void batchInsertGroceryInfo(BlockingQueue<Grocery> groceryQueue)
 	{
-		String insertSql = "INSERT INTO mkt_items_groceries (gc_name, gc_code, gc_barcode, gc_description, gc_spec, gc_status, "
-				+ "gc_is_qualified, gc_perform_standard, gc_producer, gc_producer_addr, gc_producer_phone, gc_producer_mail, gc_produced_time, "
-				+ "gc_ingredient, gc_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String insertSql = "INSERT INTO mkt_items_groceries (gc_name, gc_code, gc_barcode, gc_description, gc_spec, gc_status, gc_is_qualified, "
+				+ "gc_perform_standard, gc_producer, gc_producer_addr, gc_producer_phone, gc_producer_mail, gc_produced_time, "
+				+ "gc_ingredient, gc_addition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		List<Object[]> batch = new ArrayList<Object[]>();
 		try {
@@ -161,7 +160,6 @@ public class GroceryManageDao {
 						grocery.getBarcode(),
 						grocery.getDescription(),
 						grocery.getSpecific(),
-						grocery.getStatus(),
 						grocery.getIsQualified(),
 						grocery.getStandard(),
 						grocery.getProducer(),
@@ -209,7 +207,7 @@ public class GroceryManageDao {
 	{
 		int rows = 0;
 		String updateSql = "UPDATE mkt_items_groceries SET gc_name = ?, gc_code = ?, gc_barcode = ?, gc_description = ?, gc_spec = ?, "
-				+ "gc_status = ?, gc_is_qualified = ?, gc_perform_standard = ?, gc_producer = ?, gc_producer_addr = ?, gc_producer_phone = ?, "
+				+ "gc_is_qualified = ?, gc_perform_standard = ?, gc_producer = ?, gc_producer_addr = ?, gc_producer_phone = ?, "
 				+ "gc_producer_mail = ?, gc_produced_time = ?, gc_ingredient = ?, gc_addition = ? WHERE gc_id = ?";
 		try {
 			rows = jdbcTemplate.update(updateSql, 
@@ -219,7 +217,6 @@ public class GroceryManageDao {
 					grocery.getBarcode(),
 					grocery.getDescription(),
 					grocery.getSpecific(),
-					grocery.getStatus(),
 					grocery.getIsQualified(),
 					grocery.getStandard(),
 					grocery.getProducer(),
@@ -244,7 +241,7 @@ public class GroceryManageDao {
 	gc_barcode CHAR(13),
 	gc_description TEXT,
 	gc_spec VARCHAR(20) COMMENT '规格',
-	gc_status ENUM("在库","出库","损坏","丢失"),
+
 	gc_is_qualified TINYINT(1),
 	gc_perform_standard VARCHAR(15),
 	gc_producer CHAR(50),
@@ -269,7 +266,6 @@ public class GroceryManageDao {
 			grocery.setBarcode(rs.getString("gc_barcode"));
 			grocery.setDescription(rs.getString("gc_description"));
 			grocery.setSpecific(rs.getString("gc_spec"));
-			grocery.setStatus(rs.getString("gc_status"));
 			grocery.setIsQualified(rs.getByte("gc_is_qualified"));
 			grocery.setStandard(rs.getString("gc_perform_standard"));
 			grocery.setProducer(rs.getString("gc_producer"));

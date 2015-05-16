@@ -35,13 +35,13 @@ public class StaffManageDao {
 	 * @return StaffInfo
 	 * @date 2015-4-28
 	 */
-	public List<StaffInfo> getStaffById(int staffId)
+	public StaffInfo getStaffById(int staffId)
 	{
-		List<StaffInfo> staff = null;
+		StaffInfo staff = null;
 		
 		String querySql = "SELECT * FROM mkt_users WHERE u_id = ? LIMIT 1";
 		try{
-		staff = jdbcTemplate.query(querySql, new Object[]{ staffId }, new StaffMapper());
+		staff = jdbcTemplate.queryForObject(querySql, new Object[]{ staffId }, new StaffMapper());
 		}catch (Exception e)
 		{
 			LOGGER.info("Failed to find staff by id~", e);
@@ -178,7 +178,7 @@ public class StaffManageDao {
 	/**
 	 * 修改员工信息
 	 * @param staffInfo
-	 * @return rows
+	 * @return rows 受影响的行数
 	 * @date 2015-5-5
 	 */
 	public int updateStaffById(StaffInfo staff)

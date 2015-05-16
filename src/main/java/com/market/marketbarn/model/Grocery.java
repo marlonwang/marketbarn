@@ -9,7 +9,7 @@ import java.sql.Date;
 	gc_barcode CHAR(13),
 	gc_description TEXT,
 	gc_spec VARCHAR(20) COMMENT '规格',
-	gc_status ENUM("在库","出库","损坏","丢失"),
+
 	gc_is_qualified TINYINT(1),
 	gc_perform_standard VARCHAR(15),
 	gc_producer CHAR(50),
@@ -40,9 +40,6 @@ public class Grocery {
 	
 	// 规格
 	private String specific;
-	
-	// 库存状态
-	private String status;
 	
 	// 是否合格
 	private byte isQualified;
@@ -117,14 +114,6 @@ public class Grocery {
 
 	public void setSpecific(String specific) {
 		this.specific = specific;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public byte getIsQualified() {

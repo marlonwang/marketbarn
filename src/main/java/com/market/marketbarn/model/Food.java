@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 	fd_barcode CHAR(13),
 	fd_description TEXT,
 	fd_capacity VARCHAR(20),
-	fd_status ENUM("在库","出库","损坏","丢失"),
+
 	fd_is_qualified TINYINT(1),
 	fd_perform_standard VARCHAR(15),
 	fd_producer CHAR(50),
@@ -39,9 +39,6 @@ public class Food {
 	
 	// 容量
 	private String capacity;
-	
-	// 库存状态
-	private String status;
 	
 	// 是否合格
 	private byte isQualified; 
@@ -116,14 +113,6 @@ public class Food {
 
 	public void setCapacity(String capacity) {
 		this.capacity = capacity;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public byte getIsQualified() {
