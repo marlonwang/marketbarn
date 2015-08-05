@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+	<property name="LOG_HOME" value="D:/java/workspace/marketbarn/logs" />
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5level %logger{32} [%L] - %msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="marketbarn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<Encoding>UTF-8</Encoding>
+		<File>${LOG_HOME}/market.log</File>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>DEBUG</level>
+		</filter>
+		<encoder>
+			<pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5level %logger{0} [%L] - %msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_HOME}/market.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="thirdlib" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<Encoding>UTF-8</Encoding>
+		<File>${LOG_HOME}/thirdlib.log</File>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>info</level>
+		</filter>
+		<encoder>
+			<pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5level %logger{32} [%L] - %msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_HOME}/thirdlib.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<logger name="com.springmvc" level="DEBUG" addtivity="false">
+		<appender-ref ref="marketbarn" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="thirdlib" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

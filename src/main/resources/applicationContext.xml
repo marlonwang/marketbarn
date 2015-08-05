@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/tx 
+           http://www.springframework.org/schema/tx/spring-tx.xsd
+           http://www.springframework.org/schema/context 
+           http://www.springframework.org/schema/context/spring-context.xsd  
+           ">
+
+	<bean id="springContextHolder" class="com.springmvc.marketbarn.spring.SpringContextHolder"
+		lazy-init="false" />
+
+	<!-- 将多个配置文件读取到容器中，交给Spring管理 -->
+	<bean id="propertyConfigurer"
+		class="com.springmvc.marketbarn.spring.DecryptPropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:druid.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- data source with taobao's druid -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url"
+			value="jdbc:mysql://${mysql.ip}:${mysql.port}/${mysql.db}?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;failOverReadOnly=false" />
+		<property name="username" value="${mysql.user}" />
+		<property name="password" value="${mysql.password}" />
+		<property name="initialSize" value="5" />
+		<property name="maxActive" value="20" />
+	</bean>
+
+	<!-- 事务机制 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- JDBC Template -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 文件上传 大小最大10M-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+  		<property name="maxUploadSize" value="10485760" />  
+	</bean>
+	
+	<!-- 请求字符码解析 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+                <bean id="jsonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/plain;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+        <property name="synchronizeOnSession" value="true" />
+    </bean>
+
+</beans>
