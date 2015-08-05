@@ -1,3 +1,0 @@
-[2015-04-26 19:30:48] [main] INFO  Application [52] - Starting Application on 20150419A-PC with PID 2000 (D:\java\workspace\marketbarn\target\classes started by marlon in D:\java\workspace\marketbarn)
-[2015-04-26 19:30:48] [main] DEBUG Application [55] - Running with Spring Boot v1.1.4.RELEASE, Spring v4.1.0.RELEASE
-[2015-04-26 19:30:52] [main] INFO  Application [61] - Started Application in 5.039 seconds (JVM running for 5.76)
